@@ -1,0 +1,127 @@
+import { useState } from "react";
+import { MenuIcon, XIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
+export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { isLoggedIn, user, logout, loading } = useAuth();
+
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result.success) {
+      navigate("/");
+      setIsMenuOpen(false);
+    }
+  };
+
+  return (
+    <>
+      <motion.nav
+        className="sticky top-0 z-50 flex items-center justify-between w-full h-18 px-6 md:px-16 lg:px-24 xl:px-32 backdrop-blur"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
+      >
+        <Link to="/" className="flex items-center gap-2">
+          <span className="text-2xl font-bold bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+            Thumbz
+          </span>
+        </Link>
+
+        <div className="hidden lg:flex items-center gap-8 transition duration-500">
+          <Link to="/" className="hover:text-slate-300 transition">
+            Home
+          </Link>
+          <Link to="/generate" className="hover:text-slate-300 transition">
+            Generate
+          </Link>
+          {isLoggedIn && (
+            <Link
+              to="/my-generations"
+              className="hover:text-slate-300 transition"
+            >
+              My Generations
+            </Link>
+          )}
+          <Link to="#" className="hover:text-slate-300 transition">
+            My Contact
+          </Link>
+        </div>
+
+        <div className="hidden lg:block space-x-3">
+          {!isLoggedIn ? (
+            <>
+              <button
+                onClick={() => navigate("/login")}
+                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md active:scale-95"
+              >
+                Get started
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="text-slate-300 mr-3">{user?.name}</span>
+              <button
+                onClick={handleLogout}
+                disabled={loading}
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 transition text-white rounded-md active:scale-95"
+              >
+                {loading ? "Logging out..." : "Logout"}
+              </button>
+            </>
+          )}
+        </div>
+        <button
+          onClick={() => setIsMenuOpen(true)}
+          className="lg:hidden active:scale-90 transition"
+        >
+          <MenuIcon className="size-6.5" />
+        </button>
+      </motion.nav>
+      <div
+        className={`fixed inset-0 z-[100] bg-black/60 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 lg:hidden transition-transform duration-400 ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <Link to="/" onClick={() => setIsMenuOpen(false)}>
+          Home
+        </Link>
+        <Link to="/generate" onClick={() => setIsMenuOpen(false)}>
+          Generate
+        </Link>
+        {isLoggedIn && (
+          <Link to="/my-generations" onClick={() => setIsMenuOpen(false)}>
+            My Generations
+          </Link>
+        )}
+        <Link to="#" onClick={() => setIsMenuOpen(false)}>
+          My Contact
+        </Link>
+        {!isLoggedIn ? (
+          <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+            Login
+          </Link>
+        ) : (
+          <>
+            <span className="text-slate-300">{user?.name}</span>
+            <button
+              onClick={handleLogout}
+              disabled={loading}
+              className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 transition text-white rounded-md"
+            >
+              {loading ? "Logging out..." : "Logout"}
+            </button>
+          </>
+        )}
+        <button
+          onClick={() => setIsMenuOpen(false)}
+          className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-slate-100 hover:bg-slate-200 transition text-black rounded-md flex"
+        >
+          <XIcon />
+        </button>
+      </div>
+    </>
+  );
+}
