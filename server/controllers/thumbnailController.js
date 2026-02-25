@@ -1,5 +1,5 @@
 const { InferenceClient } = require("@huggingface/inference");
-const Thumbnail = require("../models/thumbnail");
+const Thumbnail = require("../models/Thumbnail");
 const cloudinary = require("cloudinary").v2;
 require("dotenv").config();
 

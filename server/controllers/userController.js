@@ -1,4 +1,4 @@
-const Thumbnail = require("../models/thumbnail");
+const Thumbnail = require("../models/Thumbnail");
 
 
 // controllers to get all user thumbnails
