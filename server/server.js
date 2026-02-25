@@ -48,9 +48,9 @@ app.use('/api/user',userRouter)
 // connection to the server and database
 mongoose.connect(DB_PATH).then(() => {
   console.log('Connected to Mongo');
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  // app.listen(PORT, () => {
+  //   console.log(`Server running on http://localhost:${PORT}`);
+  // });
 }).catch(err => {
   console.log('Error while connecting to Mongo: ', err);
 });
