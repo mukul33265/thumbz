@@ -39,7 +39,7 @@ const generateThumbnail = async (req, res) => {
     `;
 
     // Save DB record
-    const thumbnail = await Thumbnail.create({
+    const thumbnail = new Thumbnail({
       userId,
       title,
       prompt_used: enhancedPrompt,
