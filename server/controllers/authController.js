@@ -82,24 +82,26 @@ const logoutUser = async(req,res) => {
 }
 
 // controller for user verify 
-const verifyUser = async (req,res)=>{
-    try{
-        const {userId} = req.session ;
-        // Return everything except password field (-password)
-        const user = await User.findById(userId).select('-password');
-
-        if(!user){
-            return res.status(400).json({message : 'Invalid User'});
+const verifyUser = async (req, res) => {
+    try {
+        if (!req.session || !req.session.userId) {
+            return res.status(401).json({ message: "Not authenticated" });
         }
 
-        return res.json({user});
-    }
-    catch(error){
+        const user = await User.findById(req.session.userId).select('-password');
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid User" });
+        }
+
+        return res.status(200).json({ user });
+
+    } catch (error) {
         console.log(error);
-        return res.json({
-            message : error.message 
-        })
+        return res.status(500).json({
+            message: error.message
+        });
     }
-}
+};
 
 module.exports = { registerUser,loginUser,logoutUser,verifyUser };
