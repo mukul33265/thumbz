@@ -20,11 +20,14 @@ const store = MongoStore.create({
 });
 // Middlewares
 app.use(cors({
-  origin : ['http://localhost:5173','https://localhost:5000','https://thumbz-client.vercel.app/'],
+  origin : ['http://localhost:5173','https://thumbz-client.vercel.app'],
   credentials : true 
 }));
+app.options("*", cors());
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
+app.set("trust proxy", 1);
 app.use(session({
   secret : SECRET_KEY ,
   resave : false ,
@@ -32,7 +35,9 @@ app.use(session({
   store ,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24*7,   // 7 day
-    httpOnly : true
+    httpOnly : true,
+    secure : true ,
+    sameSite : "none"
   }
 }))
 
