@@ -6,9 +6,24 @@ export default function PreviewPanel({ thumbnail, loading, selectedRatio }) {
     "1:1": "aspect-square",
     "9:16": "aspect-[9/16]",
   };
-  const onDownload = () => {
+  const onDownload = async() => {
     if (!thumbnail?.image_url) return;
-    window.open(thumbnail.image_url, "_blank");
+    try {
+    const response = await fetch(thumbnail.image_url);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `thumbnail-${Date.now()}.png`; // file name
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
   };
 
   return (
