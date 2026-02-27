@@ -25,6 +25,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
+app.set('trust proxy',1);
 app.use(session({
   secret : SECRET_KEY ,
   resave : false ,
@@ -34,7 +35,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24*7,   // 7 day
     httpOnly : true,
     secure : process.env.NODE_ENV === 'production',
-    sameSite : 'none',
+    sameSite : process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path : '/'
   }
 }))
